@@ -3,22 +3,16 @@ import { randomBytes } from 'crypto'
 import { compare, hash } from 'bcrypt'
 
 import { PrismaService } from '../prisma/prisma.service'
+import { EmailService } from 'src/email/email.service'
 
 @Injectable()
 export class AuthService {
 	private readonly saltRounds = 10;
 
 	constructor(
-		private readonly prismaService: PrismaService
+		private readonly prismaService: PrismaService,
+		private readonly emailService: EmailService
 	) { }
-
-	async getUsers() {
-		return await this.prismaService.user.findMany({
-			include: {
-				sessions: true
-			}
-		})
-	}
 
 	async createUserAndSendVerifyEmail(email: string) {
 		const candidate = await this.prismaService.user.findUnique({
@@ -31,12 +25,14 @@ export class AuthService {
 
 		const verifyToken = this.generateVerifyToken()
 
-		const user = await this.prismaService.user.create({
+		await this.prismaService.user.create({
 			data: {
 				email,
 				verifyToken
 			}
 		})
+
+		this.emailService.sendVerificationEmail(email, verifyToken)
 
 		return {
 			message: 'User created successfully'

@@ -8,11 +8,6 @@ import { CreateUserDto, SignInDto, TerminateSessionDto, VerifyAccountDto } from 
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
-  @Get()
-  async getUsers() {
-    return this.authService.getUsers()
-  }
-
   @Post('sign-up')
   async signUp(
     @Body() body: CreateUserDto
