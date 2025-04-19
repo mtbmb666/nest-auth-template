@@ -1,0 +1,34 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  userId       String   @id @default(uuid()) @map("user_id")
+  name         String?  @map("name")
+  userPhoto    String?  @map("user_photo")
+  email        String   @unique @map("email")
+  passwordHash String?  @map("password_hash")
+  verifyToken  String?  @map("verify_token")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  sessions Session[]
+
+  @@map("users")
+}
+
+model Session {
+  sessionId  String   @map("session_id") @id @default(uuid())
+  userId     String   @map("user_id")
+  deviceName String   @map("device_name")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [userId], onDelete: Restrict)
+
+  @@map("sessions")
+}
