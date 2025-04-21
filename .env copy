@@ -1,0 +1,10 @@
+#App port
+PORT="5000"
+
+#Database prisma connection link
+DATABASE_URL=""
+
+#Email Service configs
+EMAIL_USER=""
+EMAIL_PASSWORD=""
+APP_URL="http://localhost:3000"
